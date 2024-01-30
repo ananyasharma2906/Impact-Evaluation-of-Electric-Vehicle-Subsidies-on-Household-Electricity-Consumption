@@ -1,0 +1,52 @@
+---
+title: "Impact Evaluation of Electric Vehicle Subsidies on Household Electricity Consumption"
+author: "Ananya Sharma"
+date: "1/30/2024"
+output: pdf_document
+---
+```{r}
+data <- read.csv("ps3_data-2.csv")
+reg1 <- lm(number_of_evs ~ ev_subsidy_amount, data=data)
+summary(reg1)
+```
+
+```{r}
+first_stage <- lm(number_of_evs ~ ev_subsidy_amount, data = data)
+summary(first_stage)
+```
+```{r}
+predicted_evs <- predict(first_stage)
+second_stage <- lm(hh_electricity_use_meter1 ~ predicted_evs + ev_subsidy_amount, data = data)
+summary(second_stage)
+```
+```{r}
+  library(ggplot2)
+ggplot(data, aes(x = hh_electricity_use_backchecks, y = hh_electricity_use_meter1)) +
+  geom_point() +
+  xlab("Backchecks") +
+  ylab("Meter estimates") +
+  ggtitle("Relationship between Backchecks and Meter Estimates")
+```
+```{r}
+reg2 <- lm(hh_electricity_use_backchecks ~ number_of_evs, data = data)
+summary(reg2)
+```
+
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = hh_electricity_use_backchecks, y = hh_electricity_use_meter2)) +
+  geom_point(alpha = 0.5) +
+  xlab("Backcheck electricity usage") +
+  ylab("Meter 2 electricity usage") +
+  ggtitle("Relationship between backcheck and meter 2 electricity usage")
+```
+
+```{r}
+reg3 <- lm(hh_electricity_use_meter2 ~ number_of_evs + ev_subsidy_amount, data = data)
+summary(reg3)
+```
+
+```{r}
+ lm(formula = hh_electricity_use_meter2 ~ ev_subsidy_amount, data = data)
+```
+
